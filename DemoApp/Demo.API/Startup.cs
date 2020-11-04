@@ -17,6 +17,8 @@ using System.Reflection;
 using System.IO;
 using Demo.API.Contracts;
 using Demo.API.Services;
+using AutoMapper;
+using Demo.API.Mappings;
 
 namespace Demo.API
 {
@@ -44,6 +46,8 @@ namespace Demo.API
                                                         .AllowAnyMethod()
                                                         .AllowAnyHeader());
             });
+
+            services.AddAutoMapper(typeof(Maps));
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1",new OpenApiInfo { Title ="My Demo API", Version="v1", Description = "Training"});
