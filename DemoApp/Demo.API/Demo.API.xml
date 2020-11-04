@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Demo.API</name>
+    </assembly>
+    <members>
+        <member name="M:Demo.API.Controllers.HomeController.Get">
+            <summary>
+            Test Controller
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
