@@ -58,6 +58,7 @@ namespace Demo.API
 
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IDirectorRepository, DirectorRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IMovieRepository, MovieRepository>();

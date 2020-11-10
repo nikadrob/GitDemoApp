@@ -16,6 +16,8 @@ namespace Demo.API.Mappings
             CreateMap<Author, AuthorCreateDTO>().ReverseMap();
             CreateMap<Author, AuthorUpdateDTO>().ReverseMap();
             CreateMap<Book, BookDTO>().ReverseMap();
+            CreateMap<Book, BookCreateDTO>().ReverseMap();
+            CreateMap<Book, BookUpdateDTO>().ReverseMap();
             CreateMap<Director, DirectorDTO>().ReverseMap();
             CreateMap<Genre, GenreDTO>().ReverseMap();
             CreateMap<Movie, MovieDTO>().ReverseMap();

@@ -44,10 +44,36 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:Demo.API.Controllers.HomeController.Get">
+        <member name="T:Demo.API.Controllers.BooksController">
             <summary>
-            Test Controller
+            Interacts with book table   
             </summary>
+        </member>
+        <member name="M:Demo.API.Controllers.BooksController.GetBooks">
+            <summary>
+            Get All Books
+            </summary>
+            <returns>A list of books</returns>
+        </member>
+        <member name="M:Demo.API.Controllers.BooksController.GetBook(System.Int32)">
+            <summary>
+            Gets single book
+            </summary>
+            <param name="Id"></param>
+            <returns>Book record</returns>
+        </member>
+        <member name="M:Demo.API.Controllers.BooksController.Create(Demo.API.DTO.BookCreateDTO)">
+            <summary>
+            Creates a book
+            </summary>
+            <param name="bookDTO"></param>
+            <returns>Book</returns>
+        </member>
+        <member name="M:Demo.API.Controllers.BooksController.Delete(System.Int32)">
+            <summary>
+            Deletes a book   
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
     </members>
