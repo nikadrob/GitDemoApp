@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demo.API.Contracts
 {
-    interface IGenreRepository : IRepositoryBase<Genre>
+    public interface IGenreRepository : IRepositoryBase<Genre>
     {
     }
 }

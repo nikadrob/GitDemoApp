@@ -69,11 +69,131 @@
             <param name="bookDTO"></param>
             <returns>Book</returns>
         </member>
+        <member name="M:Demo.API.Controllers.BooksController.Update(System.Int32,Demo.API.DTO.BookUpdateDTO)">
+            <summary>
+            Updates a book
+            </summary>
+            <param name="id"></param>
+            <param name="bookDTO"></param>
+            <returns></returns>
+        </member>
         <member name="M:Demo.API.Controllers.BooksController.Delete(System.Int32)">
             <summary>
             Deletes a book   
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.DirectorsController.GetDirectors">
+            <summary>
+            List of Directors
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.DirectorsController.GetDirectors(System.Int32)">
+            <summary>
+            Get Director by Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.DirectorsController.Create(Demo.API.DTO.DirectorCreateDTO)">
+            <summary>
+            Creates a director   
+            </summary>
+            <param name="directorDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.DirectorsController.Update(System.Int32,Demo.API.DTO.DirectorUpdateDTO)">
+            <summary>
+            Updates a director   
+            </summary>
+            <param name="id"></param>
+            <param name="directorDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.DirectorsController.Delete(System.Int32)">
+            <summary>
+            Deletes a director   
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.GenresController.GetGenres">
+            <summary>
+            Get all genres
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.GenresController.GetGenre(System.Int32)">
+            <summary>
+            Get single genre by Id
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>        
+        </member>
+        <member name="M:Demo.API.Controllers.GenresController.Create(Demo.API.DTO.GenreCreateDTO)">
+            <summary>
+            Creates a genre
+            </summary>
+            <param name="genreDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.GenresController.Update(System.Int32,Demo.API.DTO.GenreUpdateDTO)">
+            <summary>
+            Genre updating
+            </summary>
+            <param name="id"></param>
+            <param name="genreDTO"></param>
+            <returns>No content</returns>
+        </member>
+        <member name="M:Demo.API.Controllers.GenresController.Delete(System.Int32)">
+            <summary>
+            Deletes a genre   
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.MoviesController.GetMovies">
+            <summary>
+            List of Directors
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.MoviesController.GetMovies(System.Int32)">
+            <summary>
+            Get Movie by Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.MoviesController.Create(Demo.API.DTO.MovieCreateDTO)">
+            <summary>
+            Creates a movie   
+            </summary>
+            <param name="movieDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.MoviesController.Update(System.Int32,Demo.API.DTO.MovieUpdateDTO)">
+            <summary>
+            Updates a movie   
+            </summary>
+            <param name="id"></param>
+            <param name="movieDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.MoviesController.Delete(System.Int32)">
+            <summary>
+            Deletes a movie   
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Demo.API.Controllers.UsersController.Login(Demo.API.DTO.UserDTO)">
+            <summary>
+            User login endpoint
+            </summary>
+            <param name="userDTO"></param>
             <returns></returns>
         </member>
     </members>

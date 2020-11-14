@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demo.API.Contracts
 {
-    interface IDirectorRepository: IRepositoryBase<Director>
+    public interface IDirectorRepository: IRepositoryBase<Director>
     {
     }
 }

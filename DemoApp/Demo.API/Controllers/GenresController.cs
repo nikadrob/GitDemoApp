@@ -1,181 +1,174 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Demo.API.Contracts;
 using Demo.API.Data;
 using Demo.API.DTO;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.API.Controllers
 {
-    /// <summary>
-    /// Interacts with book table   
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class BooksController : ControllerBase
+    public class GenresController : ControllerBase
     {
-        private readonly IBookRepository _bookRepository;
-        private readonly ILoggerService _logger;
+        private readonly IGenreRepository _genreRepository;
         private readonly IMapper _mapper;
-        public BooksController(IBookRepository bookRepository, ILoggerService logger, IMapper mapper)
+        private readonly ILoggerService _logger;
+
+        public GenresController(IGenreRepository genreRepository, IMapper mapper, ILoggerService logger)
         {
-            _bookRepository = bookRepository;
-            _logger = logger;
+            _genreRepository = genreRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
-        /// Get All Books
+        /// Get all genres
         /// </summary>
-        /// <returns>A list of books</returns>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBooks()
+        public async Task<IActionResult> GetGenres()
         {
             var location = GetControllerActionNames();
             try
             {
-                _logger.LogInfo($"{location}: Attempted call");
-                var books = await _bookRepository.FindAll();
-                var response = _mapper.Map<IList<BookDTO>>(books);
+                _logger.LogInfo($"{location}: Started Get All Genres");
+                var genres = await _genreRepository.FindAll();
+                var response = _mapper.Map<IList<GenreDTO>>(genres);
                 _logger.LogInfo($"{location}: Successful");
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return InternalError($"{location}: Something went wrong: {ex.Message}");
+                return InternalError($"{location} : Something wrong {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Gets single book
+        /// Get single genre by Id
         /// </summary>
         /// <param name="Id"></param>
-        /// <returns>Book record</returns>
+        /// <returns></returns>        
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBook(int Id)
+        public async Task<IActionResult> GetGenre(int Id)
         {
             var location = GetControllerActionNames();
             try
             {
-                _logger.LogInfo($"{location}: Attempted call for Id: {Id}");
-                var book = await _bookRepository.FindById(Id);
-                if (book == null)
+                _logger.LogInfo($"{location}: Started Get Single Genre");
+                var genre = await _genreRepository.FindById(Id);
+                if (genre == null)
                 {
-                    _logger.LogWarn($"{location}: Failed to retrieve Id: {Id}");
+                    _logger.LogWarn($"{location}: No exists id {Id}");
                     return NotFound();
                 }
-                var response = _mapper.Map<BookDTO>(book);
+                var response = _mapper.Map<GenreDTO>(genre);
                 _logger.LogInfo($"{location}: Successful");
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return InternalError($"{location}: Something went wrong: {ex.Message}");
+                return InternalError($"{location} : Something wrong {ex.Message}");
             }
         }
+
         /// <summary>
-        /// Creates a book
+        /// Creates a genre
         /// </summary>
-        /// <param name="bookDTO"></param>
-        /// <returns>Book</returns>
+        /// <param name="genreDTO"></param>
+        /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] BookCreateDTO bookDTO)
+        public async Task<IActionResult> Create([FromBody] GenreCreateDTO genreDTO)
         {
             var location = GetControllerActionNames();
             try
             {
-                _logger.LogInfo($"{location}: Create attempted");
-                if (bookDTO == null)
+                _logger.LogInfo($"{location}: Started Create Genre");
+                if (genreDTO == null)
                 {
-                    _logger.LogWarn($"{location}: Empty request submitted");
+                    _logger.LogError($"{location}: Empty request");
                     return BadRequest(ModelState);
                 }
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogWarn($"{location}: Model state not valid");
+                    _logger.LogError($"{location}: Wrong model state");
                     return BadRequest(ModelState);
                 }
-                var book = _mapper.Map<Book>(bookDTO);
-                var IsSuccess = await _bookRepository.Create(book);
+                var genre = _mapper.Map<Genre>(genreDTO);
+                var IsSuccess = await _genreRepository.Create(genre);
                 if (!IsSuccess)
                 {
-                    return InternalError($"{location}: Creation failed");
+                    return InternalError($"{location} : Creation failed");
                 }
-                _logger.LogInfo($"{location} Book created");
-                return Created("Create", new { book });
+                return Created("Create", new { genre });
             }
             catch (Exception ex)
             {
-                return InternalError($"{location}: Something went wrong: {ex.Message}");
+                return InternalError($"{location} : Something wrong {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Updates a book
+        /// Genre updating
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="bookDTO"></param>
-        /// <returns></returns>
+        /// <param name="genreDTO"></param>
+        /// <returns>No content</returns>
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(int id, [FromBody] BookUpdateDTO bookDTO)
+        public async Task<IActionResult> Update(int id, [FromBody] GenreUpdateDTO genreDTO)
         {
             var location = GetControllerActionNames();
             try
             {
-                _logger.LogInfo("Update started");
-                if (id < 1 || bookDTO == null || id != bookDTO.Id)
+                _logger.LogInfo($"{location}: Started update genre");
+                if (id < 1 || genreDTO == null || id != genreDTO.Id)
                 {
-                    _logger.LogWarn("Empty request");
+                    _logger.LogError($"{location}: Empty request");
                     return BadRequest();
                 }
-                var isExists = await _bookRepository.IsExists(id);
-                if (!isExists)
+                var isExists = await _genreRepository.IsExists(id);
+                if(!isExists)
                 {
-                    _logger.LogWarn("Author does not exists");
+                    _logger.LogError($"{location}: Wrong Id");
                     return BadRequest();
                 }
-                var book = _mapper.Map<Book>(bookDTO);
-                var isSuccess = await _bookRepository.Update(book);
-                if (!isSuccess)
+                var author = _mapper.Map<Genre>(genreDTO);
+                var isSuccess = await _genreRepository.Update(author);
+                if(!isSuccess)
                 {
-                    return InternalError("Book update failed");
+                    return InternalError("Genre update failed");
                 }
-                _logger.LogInfo("Book updated");
+                _logger.LogInfo("Genre updated");
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return InternalError($"{location}: Something went wrong: {ex.Message}");
+                return InternalError($"{location} : Something wrong {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Deletes a book   
+        /// Deletes a genre   
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -189,24 +182,24 @@ namespace Demo.API.Controllers
                     _logger.LogWarn("Empty request");
                     return BadRequest();
                 }
-                var isExists = await _bookRepository.IsExists(id);
+                var isExists = await _genreRepository.IsExists(id);
                 if (!isExists)
                 {
-                    _logger.LogWarn("Book does not exists");
+                    _logger.LogWarn("Genre does not exists");
                     return BadRequest();
                 }
-                var author = await _bookRepository.FindById(id);
-                if (author == null)
+                var genre = await _genreRepository.FindById(id);
+                if (genre == null)
                 {
-                    _logger.LogWarn("Book not found");
+                    _logger.LogWarn("Genre not found");
                     return NotFound();
                 }
-                var isSuccess = await _bookRepository.Delete(author);
+                var isSuccess = await _genreRepository.Delete(genre);
                 if (!isSuccess)
                 {
-                    return InternalError("Book deletion failed");
+                    return InternalError("Genre deletion failed");
                 }
-                _logger.LogInfo("Book deleted");
+                _logger.LogInfo("Genre deleted");
                 return NoContent();
             }
             catch (Exception ex)

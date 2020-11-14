@@ -1,51 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Demo.API.Contracts;
 using Demo.API.Data;
 using Demo.API.DTO;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.API.Controllers
 {
-    /// <summary>
-    /// Interact with Authors
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class AuthorsController : ControllerBase
+    public class MoviesController : ControllerBase
     {
-        private readonly IAuthorRepository _authorRepository;
-        private readonly ILoggerService _logger;
+        private readonly IMovieRepository _movieRepository;
         private readonly IMapper _mapper;
+        private readonly ILoggerService _logger;
 
-        public AuthorsController(IAuthorRepository authorRepository, ILoggerService logger, IMapper mapper)
+        public MoviesController(IMovieRepository movieRepository, IMapper mapper, ILoggerService logger)
         {
-            _authorRepository = authorRepository;
-            _logger = logger;
+            _movieRepository = movieRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
-        /// List of Authors
+        /// List of Directors
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAuthors()
+        public async Task<IActionResult> GetMovies()
         {
             try
             {
-                _logger.LogInfo("Get all authors");
-                var authors = await _authorRepository.FindAll();
-                var response = _mapper.Map<IList<AuthorDTO>>(authors);
+                _logger.LogInfo("Get all movies");
+                var movies = await _movieRepository.FindAll();
+                var response = _mapper.Map<IList<MovieDTO>>(movies);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -55,7 +49,7 @@ namespace Demo.API.Controllers
 
         }
         /// <summary>
-        /// Get Author by Id
+        /// Get Movie by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -63,18 +57,18 @@ namespace Demo.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAuthor(int id)
+        public async Task<IActionResult> GetMovies(int id)
         {
             try
             {
-                _logger.LogInfo($"Get single author with id: {id}");
-                var author = await _authorRepository.FindById(id);
-                if (author == null)
+                _logger.LogInfo($"Get single movie with id: {id}");
+                var movie = await _movieRepository.FindById(id);
+                if (movie == null)
                 {
-                    _logger.LogWarn($"Aothor with id {id} is not found");
+                    _logger.LogWarn($"Movie with id {id} is not found");
                     return NotFound();
                 }
-                var response = _mapper.Map<AuthorDTO>(author);
+                var response = _mapper.Map<MovieDTO>(movie);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -85,21 +79,20 @@ namespace Demo.API.Controllers
         }
 
         /// <summary>
-        /// Creates an author   
+        /// Creates a movie   
         /// </summary>
-        /// <param name="authorDTO"></param>
+        /// <param name="movieDTO"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] AuthorCreateDTO authorDTO)
+        public async Task<IActionResult> Create([FromBody] MovieCreateDTO movieDTO)
         {
             try
             {
-                _logger.LogInfo("Create started");
-                if (authorDTO == null)
+                _logger.LogInfo("Create movie started");
+                if (movieDTO == null)
                 {
                     _logger.LogWarn("Empty request");
                     return BadRequest(ModelState);
@@ -109,14 +102,14 @@ namespace Demo.API.Controllers
                     _logger.LogWarn("Data incomplete");
                     return BadRequest(ModelState);
                 }
-                var author = _mapper.Map<Author>(authorDTO);
-                var isSuccess = await _authorRepository.Create(author);
+                var movie = _mapper.Map<Movie>(movieDTO);
+                var isSuccess = await _movieRepository.Create(movie);
                 if (!isSuccess)
                 {
-                    return InternalError("Author creation failed}");
+                    return InternalError("Movie creation failed}");
                 }
-                _logger.LogInfo("Author created");
-                return Created("Create", new { author });
+                _logger.LogInfo("Movie created");
+                return Created("Create", new { movie });
             }
             catch (Exception ex)
             {
@@ -125,39 +118,38 @@ namespace Demo.API.Controllers
         }
 
         /// <summary>
-        /// Updates an author   
+        /// Updates a movie   
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="authorDTO"></param>
+        /// <param name="movieDTO"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(int id, [FromBody] AuthorUpdateDTO authorDTO)
+        public async Task<IActionResult> Update(int id, [FromBody] MovieUpdateDTO movieDTO)
         {
             try
             {
                 _logger.LogInfo("Update started");
-                if (id < 1 || authorDTO == null || id != authorDTO.Id)
+                if (id < 1 || movieDTO == null || id != movieDTO.Id)
                 {
                     _logger.LogWarn("Empty request");
                     return BadRequest();
                 }
-                var isExists = await _authorRepository.IsExists(id);
-                if(!isExists)
+                var isExists = await _movieRepository.IsExists(id);
+                if (!isExists)
                 {
-                    _logger.LogWarn("Author does not exists");
+                    _logger.LogWarn("Movie does not exists");
                     return BadRequest();
                 }
-                var author = _mapper.Map<Author>(authorDTO);
-                var isSuccess = await _authorRepository.Update(author);
+                var movie = _mapper.Map<Movie>(movieDTO);
+                var isSuccess = await _movieRepository.Update(movie);
                 if (!isSuccess)
                 {
-                    return InternalError("Author update failed");
+                    return InternalError("Movie update failed");
                 }
-                _logger.LogInfo("Author updated");
+                _logger.LogInfo("Movie updated");
                 return NoContent();
             }
             catch (Exception ex)
@@ -167,12 +159,11 @@ namespace Demo.API.Controllers
         }
 
         /// <summary>
-        /// Deletes an author   
+        /// Deletes a movie   
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -186,24 +177,24 @@ namespace Demo.API.Controllers
                     _logger.LogWarn("Empty request");
                     return BadRequest();
                 }
-                var isExists = await _authorRepository.IsExists(id);
+                var isExists = await _movieRepository.IsExists(id);
                 if (!isExists)
                 {
-                    _logger.LogWarn("Author does not exists");
+                    _logger.LogWarn("Movie does not exists");
                     return BadRequest();
                 }
-                var author = await _authorRepository.FindById(id);
-                if (author == null)
+                var movie = await _movieRepository.FindById(id);
+                if (movie == null)
                 {
-                    _logger.LogWarn("Author not found");
+                    _logger.LogWarn("Director not found");
                     return NotFound();
                 }
-                var isSuccess = await _authorRepository.Delete(author);
+                var isSuccess = await _movieRepository.Delete(movie);
                 if (!isSuccess)
                 {
-                    return InternalError("Author deletion failed");
+                    return InternalError("Movie deletion failed");
                 }
-                _logger.LogInfo("Author deleted");
+                _logger.LogInfo("Movie deleted");
                 return NoContent();
             }
             catch (Exception ex)

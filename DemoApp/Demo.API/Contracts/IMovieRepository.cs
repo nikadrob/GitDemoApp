@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Demo.API.Contracts
 {
-    interface IMovieRepository : IRepositoryBase<Movie>
+    public interface IMovieRepository : IRepositoryBase<Movie>
     {
     }
 }
