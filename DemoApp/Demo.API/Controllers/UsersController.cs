@@ -35,10 +35,46 @@ namespace Demo.API.Controllers
         }
 
         /// <summary>
+        /// User registration endpoint
+        /// </summary>
+        /// <param name="userDTO"></param>
+        /// <returns></returns>
+        /// [AllowAnonymous]
+        [Route("register")]
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var username = userDTO.EmailAdress;
+                var password = userDTO.Password;
+
+                _logger.LogInfo($"{location}: Registration Attempt for {username} ");
+
+                var user = new IdentityUser { Email = username, UserName = username };
+                var result = await _userManager.CreateAsync(user, password);
+                if (!result.Succeeded)
+                {
+                    _logger.LogError($"{location}: {username} Creation not succeeded");
+                    return InternalError($"{location} : {username} Something wrong");
+                }
+
+                await _userManager.AddToRoleAsync(user, "Customer");
+                return Created("login", new { result.Succeeded });
+            }
+            catch (Exception ex)
+            {
+                return InternalError($"{location} : Something wrong {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// User login endpoint
         /// </summary>
         /// <param name="userDTO"></param>
         /// <returns></returns>
+        [Route("login")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UserDTO userDTO)
@@ -46,7 +82,7 @@ namespace Demo.API.Controllers
             var location = GetControllerActionNames();
             try
             {
-                var username = userDTO.UserName;
+                var username = userDTO.EmailAdress;
                 var password = userDTO.Password;
                 var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
 

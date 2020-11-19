@@ -9,7 +9,12 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Demo.Blazor.Data;
+using Demo.Blazor.Contracts;
+using Demo.Blazor.Services;
+using Blazored.LocalStorage;
+using System.IdentityModel.Tokens.Jwt;
+using Demo.Blazor.Providers;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Demo.Blazor
 {
@@ -28,7 +33,13 @@ namespace Demo.Blazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddBlazoredLocalStorage();
+            services.AddHttpClient();
+            services.AddScoped<APIAuthenticationStateProvider>();
+            services.AddScoped<AuthenticationStateProvider>(p =>
+                p.GetRequiredService<APIAuthenticationStateProvider>());
+            services.AddScoped<JwtSecurityTokenHandler>();
+            services.AddTransient<IAuthenticationRepository, AuthenticationRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
